@@ -10,6 +10,8 @@
 #define FINDINGLINE 0
 #define FOLLOWLINE 1
 #define AVOIDLINE 2
+#define OBSERVELINE 3
+
 int currentState = FINDINGLINE;
 bool whiteToBlackCheck = false;
 

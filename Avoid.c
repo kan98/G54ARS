@@ -1,14 +1,14 @@
 #include "Header.h"
 
-int weightedSum(int weakWeight, int strongWeight){
-	return (weakWeight*0.1) + (strongWeight*0.9);
+int weightedSum(int strongWeight, int weakWeight){
+	return (weakWeight*0.9) + (strongWeight*0.1);
 }
 
 bool rotate = false;
 bool foundLine = false;
 
 int turnSpeed  = 16;
-int lowerSpeedAvoid = 8;
+int lowerSpeedAvoid = 10;
 
 void avoidLeanRight() {
 	leftMotorSpeedAvoid = lowerSpeedAvoid;
@@ -31,13 +31,13 @@ void avoidStraight(){
 
 void backUp(){
 	clearTimer(T1);
-	avoidSetMotorSpeed(-20, -20);
+	avoidSetMotorSpeed(-10, -10);
 	while(time1[T1] < 500){}
 }
 
 void rotateRobot(int direction = 0 /* left */) {
 	resetGyro(S1);
-	while (abs(getGyroDegrees(S1)) < 60) {
+	while (abs(getGyroDegrees(S1)) < 52) {
 		if(direction == 0){
 			avoidSetMotorSpeed(turnSpeed, 0);
 			} else {
@@ -45,7 +45,7 @@ void rotateRobot(int direction = 0 /* left */) {
 		}
 	}
 	avoidStraight();
-	wait1Msec(1000);
+	wait1Msec(1700);
 	resetGyro(S1);
 	while (abs(getGyroDegrees(S1)) < 60) {
 		if(direction == 0){
@@ -55,7 +55,7 @@ void rotateRobot(int direction = 0 /* left */) {
 		}
 	}
 	avoidStraight();
-	wait1Msec(2000);
+	wait1Msec(2500);
 	rotate = true;
 }
 
@@ -73,18 +73,25 @@ task avoidLine() {
 	float prevDistanceL, prevPrevDistanceL, prevDistanceR, prevPrevDistanceR;
 	prevDistanceL = prevPrevDistanceL = getUSDistance(S4);
 	prevDistanceR = prevPrevDistanceR = getUSDistance(S2);
+	float distanceL, distanceR;
 	while (1){
-		float distanceL = getUSDistance(S4);
-		float distanceR = getUSDistance(S2);
+		distanceL = getUSDistance(S4);
+		distanceR = getUSDistance(S2);
 
 		if (currentState != AVOIDLINE){
-			if  ((distanceL+prevDistanceL+prevPrevDistanceL)/3 <= 8 || (distanceR+prevDistanceR+prevPrevDistanceR)/3 <=8){
+			if  ((distanceL+prevDistanceL+prevPrevDistanceL)/3 <= 5 || (distanceR+prevDistanceR+prevPrevDistanceR)/3 <= 5){
 				rotate = false;
+				foundLine = false;
+				whiteToBlackCheck = false;
 				currentState = AVOIDLINE;
 				backUp();
 			}
+			prevPrevDistanceL = prevDistanceL;
+			prevDistanceL = distanceL;
+			prevPrevDistanceR = prevDistanceR;
+			prevDistanceR = distanceR;
 
-		} else {
+			} else {
 			while(!foundLine){
 
 				if (distanceR < distanceL) {
@@ -92,7 +99,7 @@ task avoidLine() {
 						rotateRobot();
 					}
 
-					if(weightedSum(getUSDistance(S4), getUSDistance(S2)) > 30){
+					if(weightedSum(getUSDistance(S2), getUSDistance(S4)) > 30){
 						avoidLeanRight();
 						checkForLine();
 						}else {
@@ -105,7 +112,7 @@ task avoidLine() {
 						rotateRobot(1);
 					}
 
-					if(weightedSum(getUSDistance(S2), getUSDistance(S4)) > 30){
+					if(weightedSum(getUSDistance(S4), getUSDistance(S2)) > 30){
 						avoidLeanLeft();
 						checkForLine();
 						}else {
@@ -114,13 +121,9 @@ task avoidLine() {
 					}
 				}
 				if (getUSDistance(S2) <= 5 || getUSDistance(S4) <= 5){
-					backUp();
+					//backUp();
 				}
 			}
 		}
-		prevPrevDistanceL = prevDistanceL;
-		prevDistanceL = distanceL;
-		prevPrevDistanceR = prevDistanceR;
-		prevDistanceR = distanceR;
 	}
 }

@@ -2,12 +2,16 @@
 #include "FindLine.c"
 #include "FollowLine.c"
 #include "Avoid.c"
-
+#include "Observe.c"
 
 task arbiterTask() {
 
 	while (1) {
 		switch(currentState) {
+			case OBSERVELINE:
+				setMotorSpeed(motorA, 0);
+				setMotorSpeed(motorC, 0);
+				break;
 			case AVOIDLINE:
 				setMotorSpeed(motorA, leftMotorSpeedAvoid);
 				setMotorSpeed(motorC, rightMotorSpeedAvoid);
@@ -31,6 +35,7 @@ task main()
 	startTask(findLine);
 	startTask(followLine);
 	startTask(avoidLine);
+	startTask(observeLine);
 	startTask(arbiterTask);
 	while(1){}
 }

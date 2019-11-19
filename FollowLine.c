@@ -18,12 +18,12 @@ task followLine(){
 		while(currentState == FINDINGLINE || currentState == AVOIDLINE){
 			HTCS2readRawRGB(S3,true, r, g, b);
 			currentColour = (g+b)/2;
-			if ((float)currentColour / prevPrevPrevColour < 0.7) {
+			if ((float)currentColour / prevPrevPrevColour < 0.5) {
 				whiteToBlackCheck = true;
 				if(currentState == FINDINGLINE) {
 					currentState = FOLLOWLINE;
-					leftMotorSpeedFollow = -15;
-					rightMotorSpeedFollow = -15;
+					leftMotorSpeedFollow = -12;
+					rightMotorSpeedFollow = -8;
 				}
 				wait1Msec(500);
 			} else {
@@ -37,8 +37,6 @@ task followLine(){
 	followLeanLeft();
 	HTCS2readRawRGB(S3,true, r, g, b);
 	currentColour = (g+b)/2;
-	datalogAddLong(0, currentColour);
-	datalogClose();
 
 	while(currentColour > baselineColourLine) {
 		followLeanRight();
