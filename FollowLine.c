@@ -22,28 +22,32 @@ task followLine(){
 				whiteToBlackCheck = true;
 				if(currentState == FINDINGLINE) {
 					currentState = FOLLOWLINE;
-					leftMotorSpeedFollow = -12;
-					rightMotorSpeedFollow = -8;
+					while (currentColour < prevPrevColour){
+					HTCS2readRawRGB(S3,true, r, g, b);
+					currentColour = (g+b)/2;
+					leftMotorSpeedFollow = 0;
+					rightMotorSpeedFollow = 20;
+					}
 				}
-				wait1Msec(500);
-			} else {
+				} else {
 				whiteToBlackCheck = false;
 			}
 			prevPrevPrevColour = prevPrevColour;
 			prevPrevColour = prevColour;
 			prevColour = currentColour;
+			wait1Msec(100);
 		}
-
-	followLeanLeft();
-	HTCS2readRawRGB(S3,true, r, g, b);
-	currentColour = (g+b)/2;
-
-	while(currentColour > baselineColourLine) {
-		followLeanRight();
+		startObserve = true;
+		followLeanLeft();
 		HTCS2readRawRGB(S3,true, r, g, b);
 		currentColour = (g+b)/2;
-		writeDebugStreamLine ("%d", currentColour);
+
+		while(currentColour > baselineColourLine) {
+			followLeanRight();
+			HTCS2readRawRGB(S3,true, r, g, b);
+			currentColour = (g+b)/2;
+			writeDebugStreamLine ("%d", currentColour);
+		}
 	}
-}
-abortTimeslice();
+	abortTimeslice();
 }

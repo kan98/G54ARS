@@ -64,8 +64,8 @@ void checkForLine(){
 	currentColour = (g+b)/2;
 	if (whiteToBlackCheck) {
 		foundLine = true;
-		backUp();
 		currentState = FOLLOWLINE;
+		backUp();
 	}
 }
 
@@ -119,9 +119,6 @@ task avoidLine() {
 						avoidLeanRight();
 						wait1Msec(1500);
 					}
-				}
-				if (getUSDistance(S2) <= 5 || getUSDistance(S4) <= 5){
-					//backUp();
 				}
 			}
 		}

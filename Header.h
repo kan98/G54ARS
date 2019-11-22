@@ -14,6 +14,8 @@
 
 int currentState = FINDINGLINE;
 bool whiteToBlackCheck = false;
+bool objectAvoided = false;
+bool startObserve = false;
 
 const int fasterSpeed = 20;
 const int lowerSpeed = 3;

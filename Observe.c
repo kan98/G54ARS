@@ -7,9 +7,10 @@ task observeLine(){
 	long gyroPosition = getGyroDegrees(S1);
 	clearTimer(T2);
 	int longestStraightTime = 0;
+	while(!startObserve){}
 	resetGyro(S1);
 	startingGyro = abs(getGyroDegrees(S1));
-	while(1){
+	while(!objectAvoided){
 		if(currentState == FOLLOWLINE){
 			currentGyro = (abs(getGyroDegrees(S1)));
 			if(abs(currentGyro - startingGyro) > 15){
@@ -20,16 +21,19 @@ task observeLine(){
 				}
 				clearTimer(T2);
 			}
+			displayTextLine(2, "%d", getGyroDegrees(S1));
 			if(currentGyro >= 360){
+				displayTextLine(1, "finding");
+				currentGyro = (abs(getGyroDegrees(S1)));
+				while(currentGyro != gyroPosition + 350){
 					currentGyro = (abs(getGyroDegrees(S1)));
-					while(currentGyro != gyroPosition + 360){
-						currentGyro = (abs(getGyroDegrees(S1)));
-					}
-					clearTimer(T2);
-					while(time1(T2) < (longestStraightTime/2) + 1200){
-					}
-					currentState = OBSERVELINE;
 				}
+				clearTimer(T2);
+				while(time1(T2) < (longestStraightTime/2)){
+				}
+				currentState = OBSERVELINE;
 			}
 		}
+		abortTimeslice();
 	}
+}
