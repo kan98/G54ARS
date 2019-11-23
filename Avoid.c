@@ -65,7 +65,6 @@ void checkForLine(){
 	if (whiteToBlackCheck) {
 		foundLine = true;
 		currentState = FOLLOWLINE;
-		backUp();
 	}
 }
 
