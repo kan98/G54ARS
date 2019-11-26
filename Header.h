@@ -13,18 +13,17 @@
 #define OBSERVELINE 3
 
 int currentState = FINDINGLINE;
+
 bool whiteToBlackCheck = false;
 bool objectAvoided = false;
 bool startObserve = false;
 
+long currentColour, r, g, b;
 const int fasterSpeed = 20;
 const int lowerSpeed = 3;
-long baselineColourLine = 450;
 
-long currentColour, r, g, b;
-
-int leftMotorSpeedFind = fasterSpeed;
-int rightMotorSpeedFind = lowerSpeed;
+int leftMotorSpeedFind;
+int rightMotorSpeedFind;
 
 int leftMotorSpeedFollow;
 int rightMotorSpeedFollow;

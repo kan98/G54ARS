@@ -11,6 +11,7 @@ task observeLine(){
 	resetGyro(S1);
 	startingGyro = abs(getGyroDegrees(S1));
 	while(!objectAvoided){
+		displayTextLine(1, "%d ", getGyroDegrees(S1));
 		if(currentState == FOLLOWLINE){
 			currentGyro = (abs(getGyroDegrees(S1)));
 			if(abs(currentGyro - startingGyro) > 15){
@@ -21,11 +22,12 @@ task observeLine(){
 				}
 				clearTimer(T2);
 			}
-			displayTextLine(2, "%d", getGyroDegrees(S1));
-			if(currentGyro >= 360){
-				displayTextLine(1, "finding");
+			if(currentGyro >= 350){
+				displayTextLine(2, "finding ");
+
 				currentGyro = (abs(getGyroDegrees(S1)));
 				while(currentGyro != gyroPosition + 350){
+					displayTextLine(3, "%d ", getGyroDegrees(S1));
 					currentGyro = (abs(getGyroDegrees(S1)));
 				}
 				clearTimer(T2);

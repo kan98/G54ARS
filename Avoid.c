@@ -7,26 +7,12 @@ int weightedSum(int strongWeight, int weakWeight){
 bool rotate = false;
 bool foundLine = false;
 
-int turnSpeed  = 16;
+int turnSpeed  = 20;
 int lowerSpeedAvoid = 10;
-
-void avoidLeanRight() {
-	leftMotorSpeedAvoid = lowerSpeedAvoid;
-	rightMotorSpeedAvoid = turnSpeed;
-}
-
-void avoidLeanLeft() {
-	leftMotorSpeedAvoid = turnSpeed;
-	rightMotorSpeedAvoid = lowerSpeedAvoid;
-}
 
 void avoidSetMotorSpeed(int A, int C){
 	leftMotorSpeedAvoid = A;
 	rightMotorSpeedAvoid = C;
-}
-
-void avoidStraight(){
-	avoidSetMotorSpeed(20, 20);
 }
 
 void backUp(){
@@ -37,33 +23,40 @@ void backUp(){
 
 void rotateRobot(int direction = 0 /* left */) {
 	resetGyro(S1);
-	while (abs(getGyroDegrees(S1)) < 52) {
+	while (abs(getGyroDegrees(S1)) < 45) {
 		if(direction == 0){
 			avoidSetMotorSpeed(turnSpeed, 0);
 			} else {
 			avoidSetMotorSpeed(0, turnSpeed);
 		}
 	}
-	avoidStraight();
-	wait1Msec(1700);
+	avoidSetMotorSpeed(20, 20);
+	wait1Msec(1400);
 	resetGyro(S1);
-	while (abs(getGyroDegrees(S1)) < 60) {
+	while (abs(getGyroDegrees(S1)) < 53) {
 		if(direction == 0){
 			avoidSetMotorSpeed(0, turnSpeed);
 			} else {
 			avoidSetMotorSpeed(turnSpeed, 0);
 		}
 	}
-	avoidStraight();
+	avoidSetMotorSpeed(20, 20);
 	wait1Msec(2500);
 	rotate = true;
 }
 
-void checkForLine(){
+void checkForLine(bool isLeft){
 	HTCS2readRawRGB(S3,true, r, g, b);
 	currentColour = (g+b)/2;
 	if (whiteToBlackCheck) {
 		foundLine = true;
+		clearTimer(T1);
+		if (isLeft) {
+			avoidSetMotorSpeed(20, 0);
+		} else {
+			avoidSetMotorSpeed(0, 20);
+		}
+		while (time1(T1) < 700){}
 		currentState = FOLLOWLINE;
 	}
 }
@@ -99,10 +92,10 @@ task avoidLine() {
 					}
 
 					if(weightedSum(getUSDistance(S2), getUSDistance(S4)) > 30){
-						avoidLeanRight();
-						checkForLine();
+						avoidSetMotorSpeed(lowerSpeedAvoid, turnSpeed);
+						checkForLine(1);
 						}else {
-						avoidLeanLeft();
+						avoidSetMotorSpeed(turnSpeed, lowerSpeedAvoid);
 						wait1Msec(1500);
 					}
 				}
@@ -112,10 +105,10 @@ task avoidLine() {
 					}
 
 					if(weightedSum(getUSDistance(S4), getUSDistance(S2)) > 30){
-						avoidLeanLeft();
-						checkForLine();
+						avoidSetMotorSpeed(turnSpeed, lowerSpeedAvoid);
+						checkForLine(0);
 						}else {
-						avoidLeanRight();
+						avoidSetMotorSpeed(lowerSpeedAvoid, turnSpeed);
 						wait1Msec(1500);
 					}
 				}
