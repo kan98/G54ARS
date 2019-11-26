@@ -1,5 +1,7 @@
 #include "Header.h"
 
+long baselineColourLine = 425;
+
 void followLeanRight() {
 	leftMotorSpeedFollow = lowerSpeed;
 	rightMotorSpeedFollow = fasterSpeed;
@@ -22,11 +24,14 @@ task followLine(){
 				whiteToBlackCheck = true;
 				if(currentState == FINDINGLINE) {
 					currentState = FOLLOWLINE;
-					while (currentColour < prevPrevColour){
-					HTCS2readRawRGB(S3,true, r, g, b);
-					currentColour = (g+b)/2;
-					leftMotorSpeedFollow = 0;
-					rightMotorSpeedFollow = 20;
+					leftMotorSpeedFollow = 20;
+					rightMotorSpeedFollow = 0;
+					wait1Msec(500);
+					while (currentColour < PrevPrevColour){
+						HTCS2readRawRGB(S3,true, r, g, b);
+						currentColour = (g+b)/2;
+						leftMotorSpeedFollow = 0;
+						rightMotorSpeedFollow = 20;
 					}
 				}
 				} else {
@@ -41,12 +46,10 @@ task followLine(){
 		followLeanLeft();
 		HTCS2readRawRGB(S3,true, r, g, b);
 		currentColour = (g+b)/2;
-
 		while(currentColour > baselineColourLine) {
 			followLeanRight();
 			HTCS2readRawRGB(S3,true, r, g, b);
 			currentColour = (g+b)/2;
-			writeDebugStreamLine ("%d", currentColour);
 		}
 	}
 	abortTimeslice();
